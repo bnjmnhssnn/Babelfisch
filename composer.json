@@ -1,6 +1,7 @@
 {
     "name": "bnjmnhssnn/babelfisch",
     "type": "library",
+    "description": "Enter description here",
     "autoload" : {
         "psr-4" : {
             "Babelfisch\\" : "src/"
