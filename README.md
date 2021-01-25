@@ -57,11 +57,21 @@ Content of *languages/home/main_paragraph_EN*
 ```
 {{greeting:welcome}}
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.
-{{button:buy}}
 ```
 ```php
 echo $bf->output('home:main_paragraph', ['name' => 'Ted']);
 ```
+When a dynamic data entry has the same identifier like a language file, the dynamic data will take precedence:
+```php
+echo $bf->output(
+    'home:main_paragraph', 
+    [
+        'name' => 'Ted',
+        'greeting:welcome' => 'Hi {{name}},' // Will overwrite the content of languages/greeting/welcome
+    ]
+);
+```
+
 
 #### Use cacheing
 In the case of large and deeply nested language files, it could be more performant to use a cache module.
