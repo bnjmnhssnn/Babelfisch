@@ -58,6 +58,8 @@ Content of *languages/home/main_paragraph_EN*
 {{greeting:welcome}}
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.
 ```
+First, Babelfisch will resolve *{{greeting:welcome}}* with the content of the language file *languages/greeting/welcome_EN.txt*,
+and then resolve *{{name}}* in *languages/greeting/welcome_EN.txt* with the dynamic data in the second argument.
 ```php
 echo $bf->output('home:main_paragraph', ['name' => 'Ted']);
 ```
