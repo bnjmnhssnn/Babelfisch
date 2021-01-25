@@ -5,6 +5,7 @@ Language manager for internationalization of websites
 * Supports nested language files with mustache-like syntax
 * Dynamic injection of additional data
 
+![PHP Composer](https://github.com/bnjmnhssnn/Babelfisch/workflows/PHP%20Composer/badge.svg)
 ----------
 #### Example structure of your languages folder
 Language files must be suffixed with the language identifiers used in the next step
@@ -63,7 +64,7 @@ echo $bf->output('home:main_paragraph', ['name' => 'Ted']);
 ```
 
 #### Use cacheing
-In the case of large and deeply nested language files, it could make sense to use a cache module.
+In the case of large and deeply nested language files, it could be more performant to use a cache module.
 ```php
 use \bnjmnhssnn\Babelfisch;
 use \bnjmnhssnn\Babelfisch\StorageAdapter\FilesystemAdapter;
@@ -72,11 +73,11 @@ use \bnjmnhssnn\Babelfisch\Cache\FilesystemCache;
 $bf = new Babelfisch(new FilesystemAdapter(__DIR__ . '/languages'), 'EN', 'DE', 'NL');
 $bf->setCache(new FilesystemCache(__DIR__ . '/cache'));
 ```
-When you pass dynamic data to the output method, the cache module will generate a cache file for each dynamic data set, which is not desired in many cases. Though, you have to activate the cache explicitely with a third boolean argument, or use the convenience method `outputWithCache` instead.
+When you pass dynamic data to the output method, the cache module will generate **one cache file for each dynamic data set**, which is not desired in many cases. Though, you have to activate the cache explicitely with a third boolean argument, or use the convenience method `outputWithCache` instead.
 ```php
-echo $bf->output('home:main_paragraph', ['name' => 'Ted'], true);
+echo $bf->output('very_large_paragraph', [], true);
 // ... or with the convenient method "outputWithCache"
-echo $bf->outputWithCache('home:main_paragraph', ['name' => 'Ted']);
+echo $bf->outputWithCache('very_large_paragraph');
 ```
 
 
