@@ -33,7 +33,7 @@ use \bnjmnhssnn\Babelfisch\StorageAdapter\FilesystemAdapter;
 
 $bf = new Babelfisch(
     new FilesystemAdapter(__DIR__ . '/languages'),
-    'EN', 'DE', 'NL' // Pass the preferred language first, and optional fallback languages
+    'EN', 'DE', 'NL' // Pass the active language first, then optional fallback languages
 );
 ```
 When there is no language file present, Babelfish will try to load the fallback files in the specified order. 
