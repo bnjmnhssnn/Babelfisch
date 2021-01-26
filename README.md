@@ -94,7 +94,7 @@ echo $bf->outputWithCache('very_large_paragraph');
 
 #### Strategies for missing language files
 When a language file and all of it's fallback files are missing, Babelfisch will throw an exception, by default.
-You set 4 different strategies to handle this case:
+You can set 4 different strategies to customize this behaviour.
 ```php
 // Throw an exception (default)
 $bf->setNotFoundAction(Babelfisch::NOT_FOUND_ACTION_EXCEPTION);
