@@ -15,7 +15,7 @@ languages/
 │   ├── buy_EN.txt
 │   ├── buy_DE.txt
 │   └── buy_NL.txt
-├── greeting/│
+├── greeting/
 │    ├── welcome_EN.txt
 │    ├── welcome_DE.txt
 │    └── welcome_NL.txt
@@ -36,7 +36,7 @@ $bf = new Babelfisch(
     'EN', 'DE', 'NL' // Pass the active language first, then optional fallback languages
 );
 ```
-When there is no language file present, Babelfish will try to load the fallback files in the specified order. 
+When no language file for the active language can be found, Babelfish will try to load the fallback languages in the specified order. 
 
 #### Basic Usage
 ```php
@@ -58,6 +58,8 @@ Content of *languages/home/main_paragraph_EN*
 {{greeting:welcome}}
 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.
 ```
+First, Babelfisch will resolve *{{greeting:welcome}}* with the content of the language file *languages/greeting/welcome_EN.txt*,
+and then resolve *{{name}}* in *languages/greeting/welcome_EN.txt* with the dynamic data in the second argument.
 ```php
 echo $bf->output('home:main_paragraph', ['name' => 'Ted']);
 ```
