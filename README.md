@@ -36,7 +36,7 @@ $bf = new Babelfisch(
     'EN', 'DE', 'NL' // Pass the active language first, then optional fallback languages
 );
 ```
-When no language file for the active language can be found, Babelfish will try to load the fallback languages in the specified order. 
+When no language file for the active language can be found, Babelfisch will try to load the fallback languages in the specified order. 
 
 #### Basic Usage
 ```php
