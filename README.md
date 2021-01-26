@@ -19,7 +19,7 @@ languages/
 │    ├── welcome_EN.txt
 │    ├── welcome_DE.txt
 │    └── welcome_NL.txt
-└── home
+└── home/
      ├── main_paragraph_EN.txt
      ├── main_paragraph_DE.txt
      └── main_paragraph_NL.txt
@@ -56,7 +56,7 @@ echo $bf->output('greeting:welcome', ['name' => 'Ted']); // Hello Ted, welcome t
 Content of *languages/home/main_paragraph_EN*
 ```
 {{greeting:welcome}}
-Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna.
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.
 ```
 First, Babelfisch will resolve *{{greeting:welcome}}* with the content of the language file *languages/greeting/welcome_EN.txt*,
 and then resolve *{{name}}* in *languages/greeting/welcome_EN.txt* with the dynamic data in the second argument.
@@ -90,6 +90,27 @@ When you pass dynamic data to the output method, the cache module will generate 
 echo $bf->output('very_large_paragraph', [], true);
 // ... or with the convenient method "outputWithCache"
 echo $bf->outputWithCache('very_large_paragraph');
+```
+
+#### Strategies for missing language files
+When a language file and all of it's fallback files are missing, Babelfisch will throw an exception, by default.
+You set 4 different strategies to handle this case:
+```php
+// Throw an exception (default)
+$bf->setNotFoundAction(Babelfisch::NOT_FOUND_ACTION_EXCEPTION);
+
+// Output the requested ID for the missing content
+$bf->setNotFoundAction(Babelfisch::NOT_FOUND_ACTION_SHOW_ID);
+
+// Output an empty string for the missing content
+$bf->setNotFoundAction(Babelfisch::NOT_FOUND_ACTION_EMPTY_STRING);
+
+// Provide any callable that takes the ID as input (must return a string)
+$bf->setNotFoundAction(
+     function($id) {
+          return "<strong style="background-color: red">{$id}</strong>";
+     }
+);
 ```
 
 
