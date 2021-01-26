@@ -16,6 +16,7 @@
             <file>tests/BasicUsageTest/BasicUsageTest.php</file>
             <file>tests/ResolveTest/ResolveTest.php</file>
             <file>tests/CacheIntegrationTest/CacheIntegrationTest.php</file>
+            <file>tests/NotFoundActionTest/NotFoundActionTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

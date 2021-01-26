@@ -6,12 +6,17 @@ use Babelfisch\StorageAdapter\StorageAdapterInterface;
 
 class Babelfisch
 {
+    const NOT_FOUND_ACTION_EXCEPTION = 1;
+    const NOT_FOUND_ACTION_SHOW_ID = 2;
+    const NOT_FOUND_ACTION_EMPTY_STRING = 3;
+
     protected $storage_adapter = NULL;
     protected $language_ids = NULL;
     protected $cache_module = NULL;
     protected $cache_exceptions = NULL;
     protected $id_separator = ':';
     protected $loaded = [];
+    protected $not_found_action = 1;
 
     public function __construct(StorageAdapterInterface $storage_adapter, string ...$language_ids)
     {
@@ -23,6 +28,21 @@ class Babelfisch
     {
         $this->cache_module = $cache_module;
         $this->cache_exceptions = $cache_exceptions;
+    }
+
+    public function setNotFoundAction($not_found_action) : void
+    {
+        $allowed_constants = [
+            self::NOT_FOUND_ACTION_EXCEPTION,
+            self::NOT_FOUND_ACTION_SHOW_ID,
+            self::NOT_FOUND_ACTION_EMPTY_STRING
+        ];
+        if(!is_callable($not_found_action) &&  !in_array($not_found_action, $allowed_constants)) {
+            throw new \InvalidArgumentException(
+                "Please provide a callable or a defined NOT_FOUND_ACTION constant."
+            );
+        }
+        $this->not_found_action = $not_found_action;
     }
 
     public function outputWithCache(string $id, array $temp_replacements = []) : string
@@ -52,16 +72,14 @@ class Babelfisch
         return $output;
     }
 
-    protected function load(string $id) : string
+    protected function load(string $id)
     {
         foreach($this->language_ids as $language_id) {
             if (false !== $loaded_string = $this->storage_adapter->load($this->splitId($id), $language_id)) {
                 return $loaded_string;
             }
         }
-        throw new BabelfischException(
-            "No entry found for id {$id} and language(s) " . join(', ', $this->language_ids) . "."
-        );
+        return false;
     }
 
     protected function resolve(string $string, array $replacements = [], array $loop_detect = []) : string
@@ -81,7 +99,11 @@ class Babelfisch
                 $replacement = $this->resolve($replacements[$match], $replacements, $loop_detect);
             } else {
                 if(!array_key_exists($match, $this->loaded)) {
-                    $this->loaded[$match] = $this->load($match);
+                    $load_res = $this->load($match);
+                    if(false === $load_res) {
+                        $load_res = $this->applyNotFoundAction($match);   
+                    }
+                    $this->loaded[$match] = $load_res;
                 }
                 $replacement = $this->resolve($this->loaded[$match], $replacements, $loop_detect);
             }
@@ -93,5 +115,31 @@ class Babelfisch
     protected function splitId(string $entry_id) : array
     {
         return preg_split('/' . $this->id_separator . '/', $entry_id);
+    }
+
+    protected function applyNotFoundAction(string $entry_id) : string
+    {
+        if(is_callable($this->not_found_action)) { 
+            $func = $this->not_found_action;
+            $result = $func($entry_id);
+            if(is_string($result)) {
+                return $result;
+            }
+            throw new BabelfischException(
+                'The provided not-found-action-callable must return a string but returned ' . gettype($result)
+            );  
+        }
+        switch($this->not_found_action) {
+            case self::NOT_FOUND_ACTION_EXCEPTION:
+                throw new BabelfischException(
+                    "No entry found for id {$entry_id} and language(s) " . join(', ', $this->language_ids) . "."
+                ); 
+            case self::NOT_FOUND_ACTION_SHOW_ID:
+                return "[{$entry_id}]";
+            case self::NOT_FOUND_ACTION_EMPTY_STRING:
+                return '';
+            default:
+                throw new BabelfischException("Undefined NOT_FOUND_ACTION provided.");     
+        }
     }
 }
